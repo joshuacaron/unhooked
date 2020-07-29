@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "ES2015",
+      "ES2016",
+      "ES2017",
+      "ES2018",
+      "ES2019",
+      "ES2020",
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "outDir": "dist",
+    "declaration": true,
+    "moduleResolution": "Node",
+    "target": "ESNext",
+    "allowJs": true
+  }
+}

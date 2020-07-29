@@ -1,0 +1,23 @@
+{
+  "name": "unhooked",
+  "author": "joshua@joshuacaron.ca",
+  "description": "React hooks in web components",
+  "keywords": ["web components", "hooks", "unhooked"],
+  "version": "0.1.0-rc1",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "test": "ava"
+  },
+  "devDependencies": {
+    "ava": "^3.10.1",
+    "typescript": "^3.9.7"
+  },
+  "ava": {
+    "files": [
+      "dist/lib/**/*.spec.js"
+    ]
+  }
+}
