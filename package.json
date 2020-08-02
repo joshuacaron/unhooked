@@ -2,8 +2,13 @@
   "name": "unhooked",
   "author": "joshua@joshuacaron.ca",
   "description": "React hooks in web components",
-  "keywords": ["web components", "hooks", "unhooked", "lit-html"],
-  "version": "0.1.0",
+  "keywords": [
+    "web components",
+    "hooks",
+    "unhooked",
+    "lit-html"
+  ],
+  "version": "0.1.1",
   "main": "dist/index.js",
   "license": "MIT",
   "type": "module",
