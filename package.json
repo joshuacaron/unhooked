@@ -3,7 +3,7 @@
   "author": "joshua@joshuacaron.ca",
   "description": "React hooks in web components",
   "keywords": ["web components", "hooks", "unhooked", "lit-html"],
-  "version": "0.1.0-rc2",
+  "version": "0.1.0",
   "main": "dist/index.js",
   "license": "MIT",
   "type": "module",
