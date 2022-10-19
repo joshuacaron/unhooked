@@ -1,6 +1,6 @@
 import test from 'ava';
-import {useReducer, useObjectReducer} from './useReducer.js';
-import {setupInstance} from './_testSetup.js';
+import {useReducer, useObjectReducer} from './useReducer';
+import {setupInstance} from './_testSetup';
 
 test('it should initialize the state to the initialState parameter if specified', t => {
   setupInstance(t);

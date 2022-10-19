@@ -1,6 +1,6 @@
 import test from 'ava';
-import {setupInstance} from './_testSetup.js';
-import {useMemo} from './useMemo.js';
+import {setupInstance} from './_testSetup';
+import {useMemo} from './useMemo';
 
 test(`it should call create every time if there's no inputs`, t => {
   setupInstance(t);

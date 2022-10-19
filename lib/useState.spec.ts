@@ -1,6 +1,6 @@
 import test from 'ava';
-import {useState} from './useState.js';
-import {setupInstance} from './_testSetup.js';
+import {useState} from './useState';
+import {setupInstance} from './_testSetup';
 
 test('it should initialize the state to the initial value if present', t => {
   setupInstance(t);

@@ -1,6 +1,6 @@
 import test from 'ava';
-import {useRef} from './useRef.js';
-import {setupInstance} from './_testSetup.js';
+import {useRef} from './useRef';
+import {setupInstance} from './_testSetup';
 
 test('it should not trigger rerenders', t => {
   const instance = setupInstance(t);
