@@ -1,5 +1,5 @@
 import test from 'ava';
-import {createAction} from './createAction.js';
+import {createAction} from './createAction';
 
 test('it should return a function', t => {
   const increment = createAction('unhooked/increment');

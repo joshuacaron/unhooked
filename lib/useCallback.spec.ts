@@ -1,6 +1,6 @@
 import test from 'ava';
-import {setupInstance} from './_testSetup.js';
-import {useCallback} from './useCallback.js';
+import {setupInstance} from './_testSetup';
+import {useCallback} from './useCallback';
 
 test('it should return a fixed reference to a function if no inputs are specified', t => {
   setupInstance(t);
@@ -31,3 +31,4 @@ test('it should not update the reference if inputs is empty', t => {
   t.is(result1, f);
   t.is(result2, f);
 });
+

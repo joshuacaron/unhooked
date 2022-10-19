@@ -154,6 +154,14 @@ export function _componentCreator<T>(renderFn: ((instance: HTMLElement, data: T,
         this._update();
       }
 
+      disconnectedCallback() {
+        for (let data of this._hooksData) {
+          if (data.cleanup && typeof data.cleanup === 'function') {
+            data.cleanup();
+          }
+        }
+      }
+
       _update() {
         setTimeout(() => {
           this._render();

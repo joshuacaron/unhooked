@@ -1,5 +1,5 @@
 // import puppeteer from 'puppeteer';
-import {Callback, exposeInstance} from './instances.js';
+import {Callback, exposeInstance, HookData} from './instances.js';
 
 // export async function setupBrowser(t) {
 //   const browser = await puppeteer.launch({headless: false, devtools: true});
@@ -26,7 +26,8 @@ import {Callback, exposeInstance} from './instances.js';
 export function setupInstance(t) {
   const instance = {
     updateCount: 0,
-    hookData: {},
+    hookData: {} as HookData,
+    _post: [],
     _getHookData() {
       return instance.hookData;
     },
@@ -34,7 +35,19 @@ export function setupInstance(t) {
       instance.updateCount += 1;
     },
     _postRender(fn: Callback, isSynchronous: boolean) {
+      instance._post.push([fn, isSynchronous]);
     },
+    _render() {
+      for (let [fn, isSync] of this._post) {
+        fn(); // only sync for testing
+      }
+      instance._post = [];
+    },
+    disconnectedCallback() {
+      if (instance.hookData.cleanup && typeof instance.hookData.cleanup === 'function') {
+        instance.hookData.cleanup();
+      }
+    }
   };
 
   // @ts-ignore
