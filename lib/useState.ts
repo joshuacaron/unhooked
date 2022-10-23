@@ -5,9 +5,14 @@ export type NextState<T> = T |  Updater<T>;
 export type SetStateFn<T> = (nextState: NextState<T>) => void;
 export type InitialState<T> = T | (() => T);
 
+type InternalStateData<T> = {
+  state?: T,
+  setState?: SetStateFn<T>,
+};
+
 export function useState<T>(initialState?: InitialState<T>): [T, SetStateFn<T>] {
   const instance = getInstance();
-  const data = instance._getHookData();
+  const data: InternalStateData<T> = instance._getHookData();
 
   if (!data.hasOwnProperty('state')) {
     if (initialState instanceof Function) {

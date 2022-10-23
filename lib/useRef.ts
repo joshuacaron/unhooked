@@ -1,8 +1,12 @@
 import {getInstance, Ref} from './instances.js';
 
+type InternalRefData<T> = {
+  ref?: Ref<T>,
+};
+
 export function useRef<T>(initialValue?: T): Ref<T> {
   const instance = getInstance();
-  const data = instance._getHookData();
+  const data: InternalRefData<T> = instance._getHookData();
 
   if (!data.hasOwnProperty('ref')) {
     data.ref = {

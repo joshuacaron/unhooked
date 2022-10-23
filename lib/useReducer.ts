@@ -7,11 +7,17 @@ export type ReducerHandlers<T> = {
   [key: string]: Reducer<T>,
 };
 
+type ReducerInternalData<T> = {
+  reducer?: Reducer<T>,
+  state?: T,
+  dispatch?: Dispatch,
+};
+
 export function useReducer<T>(reducer: Reducer<T>, initialState?: T);
 export function useReducer<T, S>(reducer: Reducer<T>, initialState: (S) => T, initialArg?: S);
 export function useReducer<T, S>(reducer: Reducer<T>, initialState?: (T | ((S) => T)), initialArg?: S): [T, Dispatch] {
   const instance = getInstance();
-  const data = instance._getHookData();
+  const data: ReducerInternalData<T> = instance._getHookData();
 
   data.reducer = reducer;
 
@@ -31,20 +37,11 @@ export function useReducer<T, S>(reducer: Reducer<T>, initialState?: (T | ((S) =
 }
 
 export function useObjectReducer<T>(handlers: ReducerHandlers<T>, initialState?: T): [T, Dispatch] {
-  const instance = getInstance();
-  const data = instance._getHookData();
+  return useReducer<T>((state, action) => {
+    if (handlers.hasOwnProperty(action.type)) {
+      return handlers[action.type](state, action);
+    }
 
-  data.handlers = handlers;
-
-  if (!data.hasOwnProperty('state')) {
-    data.state = initialState;
-    data.dispatch = (action: Action<any>) => {
-      if (data.handlers.hasOwnProperty(action.type)) {
-        data.state = data.handlers[action.type](data.state, action);
-      }
-      instance._update();
-    };
-  }
-
-  return [data.state, data.dispatch];
+    return state;
+  }, initialState);
 }

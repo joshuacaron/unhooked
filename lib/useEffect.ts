@@ -2,11 +2,16 @@ import {Callback, getInstance} from './instances.js';
 import {Input, shouldRun} from './inputs.js';
 
 type EffectFn = () => void | Callback;
+type InternalEffectData = {
+  inputs?: Input[],
+  callback?: EffectFn,
+  cleanup?: Callback,
+};
 
 function createEffectHook(isSynchronous: boolean): ((callback: EffectFn, inputs?: Input[]) => void) {
   return (callback: EffectFn, inputs?: Input[]) => {
     const instance = getInstance();
-    const data = instance._getHookData();
+    const data: InternalEffectData = instance._getHookData();
 
     if (!shouldRun(data, inputs)) {
       return;
@@ -20,7 +25,11 @@ function createEffectHook(isSynchronous: boolean): ((callback: EffectFn, inputs?
     }
 
     instance._postRender(() => {
-      data.cleanup = data.callback();
+      let temp = data.callback();
+
+      if (temp) {
+        data.cleanup = temp;
+      }
     }, isSynchronous);
   };
 }
