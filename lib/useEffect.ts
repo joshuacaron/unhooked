@@ -1,8 +1,10 @@
 import {Callback, getInstance} from './instances.js';
 import {Input, shouldRun} from './inputs.js';
 
-function createEffectHook(isSynchronous: boolean): ((callback: () => void | Callback, inputs?: any[]) => void) {
-  return (callback: () => void | Callback, inputs?: Input[]) => {
+type EffectFn = () => void | Callback;
+
+function createEffectHook(isSynchronous: boolean): ((callback: EffectFn, inputs?: Input[]) => void) {
+  return (callback: EffectFn, inputs?: Input[]) => {
     const instance = getInstance();
     const data = instance._getHookData();
 

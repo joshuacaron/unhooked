@@ -1,11 +1,13 @@
 import {getInstance} from './instances.js';
+import {ActionCreator, Action} from './createAction';
 
-export interface Action {
-  type: string,
-  [key: string]: any,
-}
+export type Dispatch = (action: Action<any>) => void;
+export type Reducer<T> = (state: T, action: Action<any>) => T;
+export type ReducerHandlers<T> = {
+  [key: string]: Reducer<T>,
+};
 
-export function useReducer<T>(reducer: (state: T, action: Action) => T, initialState?: T): [T, (action?: Action) => void] {
+export function useReducer<T>(reducer: Reducer<T>, initialState?: T): [T, Dispatch] {
   const instance = getInstance();
   const data = instance._getHookData();
 
@@ -13,7 +15,7 @@ export function useReducer<T>(reducer: (state: T, action: Action) => T, initialS
 
   if (!data.hasOwnProperty('state')) {
     data.state = initialState;
-    data.dispatch = (action: Action) => {
+    data.dispatch = (action: Action<any>) => {
       data.state = data.reducer(data.state, action);
       instance._update();
     };
@@ -22,8 +24,7 @@ export function useReducer<T>(reducer: (state: T, action: Action) => T, initialS
   return [data.state, data.dispatch];
 }
 
-
-export function useObjectReducer<T>(handlers: {[type: string]: (state: T, action: Action) => T}, initialState?: T): [T, (action?: Action) => void] {
+export function useObjectReducer<T>(handlers: ReducerHandlers<T>, initialState?: T): [T, Dispatch] {
   const instance = getInstance();
   const data = instance._getHookData();
 
@@ -31,7 +32,7 @@ export function useObjectReducer<T>(handlers: {[type: string]: (state: T, action
 
   if (!data.hasOwnProperty('state')) {
     data.state = initialState;
-    data.dispatch = (action: Action) => {
+    data.dispatch = (action: Action<any>) => {
       if (data.handlers.hasOwnProperty(action.type)) {
         data.state = data.handlers[action.type](data.state, action);
       }

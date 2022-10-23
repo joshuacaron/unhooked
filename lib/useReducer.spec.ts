@@ -1,6 +1,7 @@
-import test from 'ava';
-import {useReducer, useObjectReducer} from './useReducer';
+import test, {ExecutionContext} from 'ava';
+import {useReducer, useObjectReducer, Reducer} from './useReducer';
 import {setupInstance} from './_testSetup';
+import {createAction} from './createAction';
 
 test('it should initialize the state to the initialState parameter if specified', t => {
   setupInstance(t);
@@ -44,7 +45,7 @@ test('it should update the component on dispatch', t => {
 
   t.is(stateV1, 0);
 
-  dispatch();
+  dispatch({type: 'test', payload: null});
   t.is(instance.updateCount, 1);
 
   const [stateV2] = useReducer<number>(x => x + 1);
@@ -59,12 +60,12 @@ test('it should update the reducer function if changed between calls', t => {
   const [stateV1, dispatch] = useReducer(x => x + 1, 0);
   t.is(stateV1, 0);
 
-  dispatch();
+  dispatch({type: 'test', payload: null});
 
   const [stateV2] = useReducer<number>(x => x * 10);
   t.is(stateV2, 1);
 
-  dispatch();
+  dispatch({type: 'test', payload: null});
 
   const [stateV3] = useReducer<number>(x => x * 10);
 
@@ -78,7 +79,7 @@ test('it should match objects based on the action key', t => {
   const handlers = {
     [type]: (state, action) => ({
       ...state,
-      value: action.value,
+      value: action.payload,
     }),
   };
   const initialState = {
@@ -91,7 +92,7 @@ test('it should match objects based on the action key', t => {
 
   dispatch({
     type,
-    value: 5,
+    payload: 5,
   });
 
   const [stateV2] = useObjectReducer(handlers, initialState);
@@ -101,9 +102,48 @@ test('it should match objects based on the action key', t => {
 
   dispatch({
     type: 'OTHER',
+    payload: null,
   });
 
   const [stateV3] = useObjectReducer(handlers, initialState);
 
   t.is(stateV3, stateV2);
+});
+
+test('it should filter properly using the match method', (t: ExecutionContext) => {
+  setupInstance(t);
+
+  const append = createAction<number>('append');
+  const prepend = createAction<number>('prepend');
+  const replace = createAction<number[]>('replace');
+
+  const reducer: Reducer<number[]> = (state, action) => {
+    // payload properly should be properly typed in Typescript
+    if (append.match(action)) {
+      return [...state, action.payload];
+    }
+
+    if (prepend.match(action)) {
+      return [action.payload, ...state];
+    }
+
+    if (replace.match(action)) {
+      return action.payload;
+    }
+  }
+
+  let [state, dispatch] = useReducer<number[]>(reducer, [1]);
+  t.deepEqual(state, [1]);
+
+  dispatch(append(5));
+  [state, dispatch] = useReducer<number[]>(reducer, [1]);
+  t.deepEqual(state, [1, 5]);
+
+  dispatch(prepend(7));
+  [state, dispatch] = useReducer<number[]>(reducer, [1]);
+  t.deepEqual(state, [7, 1, 5]);
+
+  dispatch(replace([1, 2, 3]));
+  [state, dispatch] = useReducer<number[]>(reducer, [1]);
+  t.deepEqual(state, [1, 2, 3]);
 });

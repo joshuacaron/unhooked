@@ -96,7 +96,6 @@ test('it should use the inputs array to handle renders properly', t => {
     useEffect(callback);
     component._render();
 
-    console.log(i);
     t.is(renderCount, i + 1);
     t.is(cleanupCount, i);
   }
