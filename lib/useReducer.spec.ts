@@ -147,3 +147,51 @@ test('it should filter properly using the match method', (t: ExecutionContext) =
   [state, dispatch] = useReducer<number[]>(reducer, [1]);
   t.deepEqual(state, [1, 2, 3]);
 });
+
+test('it should support lazy initialization of the initial state', (t: ExecutionContext) => {
+  setupInstance(t);
+
+  let timesInitialized = 0;
+
+  const reducer: Reducer<number> = (state, action) => state + action.payload;
+  const initialState = () => {
+    timesInitialized += 1;
+    return Math.pow(10, 2);
+  };
+
+  t.is(timesInitialized, 0);
+  let [state, dispatch] = useReducer(reducer, initialState);
+
+  t.is(timesInitialized, 1);
+  t.is(state, 100);
+
+  dispatch({payload: 10});
+  [state, dispatch] = useReducer(reducer, initialState);
+
+  t.is(timesInitialized, 1);
+  t.is(state, 110);
+});
+
+test('it should support lazy initialization with an argument', (t: ExecutionContext) => {
+  setupInstance(t);
+
+  let timesInitialized = 0;
+
+  const reducer: Reducer<number> = (state, action) => state + action.payload;
+  const initialState = (arg: string) => {
+    timesInitialized += 1;
+    return arg.length;
+  };
+
+  t.is(timesInitialized, 0);
+  let [state, dispatch] = useReducer(reducer, initialState, 'hello world');
+
+  t.is(timesInitialized, 1);
+  t.is(state, 11);
+
+  dispatch({payload: 10});
+  [state, dispatch] = useReducer(reducer, initialState, 'test');
+
+  t.is(timesInitialized, 1);
+  t.is(state, 21);
+});

@@ -1,5 +1,5 @@
 import {getInstance} from './instances.js';
-import {ActionCreator, Action} from './createAction';
+import {Action} from './createAction';
 
 export type Dispatch = (action: Action<any>) => void;
 export type Reducer<T> = (state: T, action: Action<any>) => T;
@@ -7,14 +7,20 @@ export type ReducerHandlers<T> = {
   [key: string]: Reducer<T>,
 };
 
-export function useReducer<T>(reducer: Reducer<T>, initialState?: T): [T, Dispatch] {
+export function useReducer<T>(reducer: Reducer<T>, initialState?: T);
+export function useReducer<T, S>(reducer: Reducer<T>, initialState: (S) => T, initialArg?: S);
+export function useReducer<T, S>(reducer: Reducer<T>, initialState?: (T | ((S) => T)), initialArg?: S): [T, Dispatch] {
   const instance = getInstance();
   const data = instance._getHookData();
 
   data.reducer = reducer;
 
   if (!data.hasOwnProperty('state')) {
-    data.state = initialState;
+    if (initialState instanceof Function) {
+      data.state = initialState(initialArg);
+    } else {
+      data.state = initialState;
+    }
     data.dispatch = (action: Action<any>) => {
       data.state = data.reducer(data.state, action);
       instance._update();
